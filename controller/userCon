@@ -1,0 +1,48 @@
+
+const DB=require("../model/userModel");
+const  helper  = require("../utils/message");
+
+const all=async(req,res,next)=>{
+    const result=await DB.find();
+    helper.fMsg(res,"Get all user data",result);
+};
+
+const post=async(req,res,next)=>{
+   let result=DB(req.body).save();
+   helper.fMsg(res,"Add new user",result);
+   
+};
+
+const single=async(req,res,next)=>{
+    let id=req.params.id;
+    let singleuser=await DB.findById(id);
+    helper.fMsg(res,"Get single user data",singleuser);
+};
+
+const patch=async(req,res,next)=>{
+    let user=await DB.findById(req.params.id);
+    if(user){
+        await DB.findByIdAndUpdate(user._id, req.body);
+        let result=await DB.findById(user._id);
+        helper.fMsg(res,"Update user data",result);
+    }else   
+    next(new Error("Can't find Id to update"));
+};
+
+const drop=async(req,res,next)=>{
+    let result=await DB.findById(req.params.id);
+    if(result){
+        let deleteData=await DB.findByIdAndDelete(result._id);
+        helper.fMsg(res,'Delete user data',deleteData);
+    }else{
+        next(new Error("Can't find id to delete"));
+    }
+}
+
+module.exports={
+    all,
+    post,
+    single,
+    patch,
+    drop
+}

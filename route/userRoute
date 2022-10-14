@@ -1,0 +1,12 @@
+const route=require('express').Router();
+const controller=require('../controller/userCon');
+
+route.get("/",controller.all);
+route.post("/",controller.post);
+
+route.route("/:id")
+.get(controller.single)
+.patch(controller.patch)
+.delete(controller.drop)
+
+module.exports=route;
