@@ -39,7 +39,7 @@ const drop=async(req, res, next)=>{
         let ans= await DB.findByIdAndDelete(dropId._id);
         helper.fMsg(res,"delete category",ans);
     }else{
-        next(new Error("Can't find id to delete"));
+        next(new Error("Can't find id to delete item"));
     }
 
 }
