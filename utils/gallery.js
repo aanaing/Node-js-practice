@@ -1,7 +1,8 @@
 const saveFile=async(req,res,next)=>{
-    let file=req.files.file;
-    let imageName=new Date().valueOf()+"_"+file.name;
-    file.mv(`./upload/${imageName}`);
+    let photo=req.files.file;
+    //console.log(photo);
+    let imageName=new Date().valueOf()+"_"+photo.name;
+    photo.mv(`./upload/${imageName}`);
     req.body["image"] =imageName;
     next();
 }

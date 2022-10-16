@@ -1,48 +1,52 @@
 
 const DB=require("../model/userModel");
+const message = require("../utils/message");
 const  helper  = require("../utils/message");
 
-const all=async(req,res,next)=>{
-    const result=await DB.find();
-    helper.fMsg(res,"Get all user data",result);
-};
-
-const post=async(req,res,next)=>{
-   let result=DB(req.body).save();
-   helper.fMsg(res,"Add new user",result);
-   
-};
-
-const single=async(req,res,next)=>{
-    let id=req.params.id;
-    let singleuser=await DB.findById(id);
-    helper.fMsg(res,"Get single user data",singleuser);
-};
-
-const patch=async(req,res,next)=>{
-    let user=await DB.findById(req.params.id);
-    if(user){
-        await DB.findByIdAndUpdate(user._id, req.body);
-        let result=await DB.findById(user._id);
-        helper.fMsg(res,"Update user data",result);
-    }else   
-    next(new Error("Can't find Id to update"));
-};
-
-const drop=async(req,res,next)=>{
-    let result=await DB.findById(req.params.id);
-    if(result){
-        let deleteData=await DB.findByIdAndDelete(result._id);
-        helper.fMsg(res,'Delete user data',deleteData);
+const login= async(req, res, next)=>{
+    let phoneUser=await DB.findOne({phone:req.body.phone}).select("-__v");
+    if(phoneUser){
+        if(message.comparePassword(req.body.password,phoneUser.password)){
+            let user=phoneUser.toObject();
+            delete user.password;
+            user.token=message.makeToken(user);
+            //console.log(phoneUser.token);
+            helper.fMsg(res,"Login successful",user);
+        }else{
+            next (new Error("Credentials error"));
+        }
     }else{
-        next(new Error("Can't find id to delete"));
+        next (new Error("Credentails error"));
     }
+    
 }
 
+
+const register=async(req,res,next)=>{
+    let nameUser=await DB.findOne({name:req.body.name});
+    if(nameUser){
+        next(new Error("Name is already in use"));
+        return;
+    }
+
+    let email=await DB.findOne({email:req.body.email});
+    if(email){
+        next(new Error("Email is already in use"));
+        return;
+    }
+
+    let phone=await DB.findOne({phone:req.body.phone});
+    if(phone){
+        next(new Error("Phone is already in use"));
+        return;
+    }
+
+    req.body.password=message.encode(req.body.password);
+    console.log(req.body.password);
+    let result=await new DB(req.body).save();
+    helper.fMsg(res,"Register successful",req.body);
+}
 module.exports={
-    all,
-    post,
-    single,
-    patch,
-    drop
+    login,
+    register
 }

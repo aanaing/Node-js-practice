@@ -40,6 +40,7 @@ const drop=async(req, res, next)=>{
         helper.fMsg(res,"delete category",ans);
     }else{
         next(new Error("Can't find id to delete item"));
+        
     }
 
 }

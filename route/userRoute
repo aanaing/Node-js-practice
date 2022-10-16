@@ -1,12 +1,11 @@
 const route=require('express').Router();
 const controller=require('../controller/userCon');
+const {RegisterSchema}=require('../utils/schema');
+const {validateBody}=require("../utils/validation");
 
-route.get("/",controller.all);
-route.post("/",controller.post);
+route.post("/",controller.login);
+route.post("/register",validateBody(RegisterSchema), controller.register);
 
-route.route("/:id")
-.get(controller.single)
-.patch(controller.patch)
-.delete(controller.drop)
+
 
 module.exports=route;

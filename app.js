@@ -23,6 +23,7 @@ app.use('/cat',catRoute);
 const userRoute=require("./route/userRoute");
 app.use('/user',userRoute);
 
+
 const postRouter=require("./route/postRoute");
 const { response } = require("express");
 
